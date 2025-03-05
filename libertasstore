@@ -1,0 +1,67 @@
+const books = [
+    { id: 1, title: "Book One", description: "This is the first book." },
+    { id: 2, title: "Book Two", description: "This is the second book." },
+    { id: 3, title: "Book Three", description: "This is the third book." }
+];
+
+function loadBooks() {
+    const bookList = document.getElementById('book-list');
+    books.forEach(book => {
+        const listItem = document.createElement('li');
+        listItem.textContent = book.title;
+        listItem.onclick = () => {
+            window.location.href = `book-detail.html?id=${book.id}`;
+        };
+        bookList.appendChild(listItem);
+    });
+}
+
+function loadBookDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('id');
+    const book = books.find(b => b.id == bookId);
+    if (book) {
+        document.getElementById('book-title').textContent = book.title;
+        document.getElementById('book-description').textContent = book.description;
+    }
+}
+
+function addToCart() {
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('id');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(bookId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Book added to cart!');
+}
+
+function loadCart() {
+    const cartList = document.getElementById('cart-list');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.forEach(bookId => {
+        const book = books.find(b => b.id == bookId);
+        if (book) {
+            const listItem = document.createElement('li');
+            listItem.textContent = book.title;
+            cartList.appendChild(listItem);
+        }
+    });
+}
+
+function checkout() {
+    localStorage.removeItem('cart');
+    alert('Thank you for your purchase!');
+    window.location.href = 'index.html';
+}
+
+if (document.getElementById('book-list')) {
+    loadBooks();
+}
+
+if (document.getElementById('book-title')) {
+    loadBookDetail();
+}
+
+if (document.getElementById('cart-list')) {
+    loadCart();
+}
